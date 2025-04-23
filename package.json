@@ -1,0 +1,33 @@
+{
+  "name": "sola-kit",
+  "version": "0.1.0",
+  "description": "The Tools and workflows that power Sola AI wrapped in an easy to integrate package!",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Sola",
+  "license": "GPL-3.0-only",
+  "private": "false",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "watch": "tsc --project tsconfig.json -w",
+    "prepublishOnly": "npm run build",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
+    "commitlint": "^19.8.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.25.1",
+    "eslint-config-import": "^0.13.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.15",
+    "typescript": "^5.8.3"
+  }
+}
