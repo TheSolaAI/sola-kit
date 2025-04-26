@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0F0F11;
+  --foreground: #F2F2F2;
+  --primary: #6A5ACD;
+  --secondary: #262630;
+  --accent: #9945FF;
+  --muted: #707070;
+  --card: #1E1E24;
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Code block styling */
+pre {
+  background-color: #1A1A22 !important;
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+code {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+/* Markdown content styling */
+.markdown-content h1, 
+.markdown-content h2, 
+.markdown-content h3, 
+.markdown-content h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.markdown-content p {
+  margin-bottom: 1rem;
+}
+
+.markdown-content ul, 
+.markdown-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.markdown-content table th,
+.markdown-content table td {
+  border: 1px solid var(--muted);
+  padding: 0.5rem;
+}
+
+.markdown-content table th {
+  background-color: var(--secondary);
+}

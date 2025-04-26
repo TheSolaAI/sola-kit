@@ -1,0 +1,33 @@
+{
+  "name": "sola-kit-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@ai-sdk/react": "^4.3.9",
+    "@ai-sdk/openai": "^1.3.20",
+    "sola-kit": "file:../",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "react-markdown": "^9.0.1",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.358.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.67",
+    "@types/react-dom": "^18.2.22",
+    "typescript": "^5.4.3",
+    "eslint": "^9.25.1",
+    "eslint-config-next": "^14.2.0"
+  }
+}
