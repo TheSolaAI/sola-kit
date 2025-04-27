@@ -1,11 +1,17 @@
 {
   "name": "@sola-labs/ai-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The Tools and workflows that power Sola AI wrapped in an easy to integrate package!",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "author": "Sola",
   "license": "GPL-3.0-only",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "watch": "tsc --project tsconfig.json -w",
