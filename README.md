@@ -5,7 +5,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![Unlicense License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
 <br />
@@ -96,7 +95,7 @@ AI-Kit is available as an NPM package that can be easily integrated into your Ty
 
 ### Prerequisites
 
-AI-Kit is designed to work with Node.js projects. It relies on Vercel's AI SDK as a peer dependency, which is automatically installed alongside it.
+AI-Kit is designed to work with Node.js projects. It has peer dependencies that you'll need to install.
 
 - Node.js (v16 or higher)
 - npm or yarn
@@ -113,6 +112,19 @@ yarn add @sola-labs/ai-kit
 
 # Using pnpm
 pnpm add @sola-labs/ai-kit
+```
+
+AI-Kit requires the following peer dependencies:
+
+```bash
+# Using npm
+npm install ai@^4.0.0 @ai-sdk/openai@^1.0.0
+
+# Using yarn
+yarn add ai@^4.0.0 @ai-sdk/openai@^1.0.0
+
+# Using pnpm
+pnpm add ai@^4.0.0 @ai-sdk/openai@^1.0.0
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
