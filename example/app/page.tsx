@@ -1,13 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { ChatUI } from '../components/ChatUI';
+import { ChatUI, AIKitSettings } from '../components/ChatUI';
 import Image from 'next/image';
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
+  const [aiSettings, setAiSettings] = useState<AIKitSettings>({
+    appendToolSetDefinition: true,
+    orchestrationMode: {
+      enabled: true,
+      systemPrompt: undefined,
+      appendToolSetDefinition: true,
+    },
+    maxRecursionDepth: 3,
+    showSystemPrompt: false,
+  });
+  const [systemPrompt, setSystemPrompt] = useState<string | undefined>();
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
@@ -17,6 +28,18 @@ export default function Home() {
       },
       body: {
         walletAddress: walletAddress,
+        settings: aiSettings, // Pass settings to the API
+      },
+      onResponse: response => {
+        // Extract system prompt from the response headers if available
+        const promptHeader = response.headers.get('X-System-Prompt');
+        if (promptHeader) {
+          try {
+            setSystemPrompt(promptHeader);
+          } catch (e) {
+            console.error('Failed to parse system prompt:', e);
+          }
+        }
       },
     });
 
@@ -35,6 +58,10 @@ export default function Home() {
 
   const handleWalletAddressChange = (address: string) => {
     setWalletAddress(address);
+  };
+
+  const handleSettingsChange = (newSettings: AIKitSettings) => {
+    setAiSettings(newSettings);
   };
 
   return (
@@ -77,6 +104,9 @@ export default function Home() {
           walletConnected={walletConnected}
           walletAddress={walletAddress}
           onWalletAddressChange={handleWalletAddressChange}
+          settings={aiSettings}
+          onSettingsChange={handleSettingsChange}
+          systemPrompt={systemPrompt}
         />
       </div>
 
