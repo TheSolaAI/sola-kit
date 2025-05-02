@@ -1,13 +1,14 @@
 import { generateText, streamText, LanguageModelV1, Tool, UIMessage } from 'ai';
 import { BaseToolContext, ToolSet } from './types/tools.types';
+import { getToolsetSlugs } from './sola/toolsetRegistry';
 
 // Re-export types
 export * from './types/tools.types';
 
 /**
- * Options to initialize a SolaKit instance.
+ * Options to initialize a AIKit instance.
  */
-export interface SolaKitOptions {
+export interface AIKitOptions {
   /**
    * System prompt to be used when initializing the tool picker LLM.
    */
@@ -26,9 +27,9 @@ export interface SolaKitOptions {
 }
 
 /**
- * Options for making a query to the SolaKit instance.
+ * Options for making a query to the AIKit instance.
  */
-export interface SolaKitQueryOptions<ToolContext> {
+export interface AIKitQueryOptions<ToolContext> {
   /**
    * The user's input or prompt to process.
    */
@@ -51,21 +52,21 @@ export interface SolaKitQueryOptions<ToolContext> {
 }
 
 /**
- * SolaKit provides a lightweight, dynamic way to manage toolsets and interact with a language model,
+ * AIKit provides a lightweight, dynamic way to manage toolsets and interact with a language model,
  * injecting runtime context into available tools.
  */
-export class SolaKit {
+export class AIKit {
   /**
-   * SolaKit instance configuration options.
+   * AIKit instance configuration options.
    */
-  options: SolaKitOptions;
+  options: AIKitOptions;
 
   /**
-   * Creates a new instance of SolaKit.
+   * Creates a new instance of AIKit.
    *
-   * @param options Configuration options for the SolaKit instance.
+   * @param options Configuration options for the AIKit instance.
    */
-  constructor(options: SolaKitOptions) {
+  constructor(options: AIKitOptions) {
     this.options = options;
   }
 
@@ -76,7 +77,7 @@ export class SolaKit {
    * @returns A Promise that resolves once the query has been processed.
    */
   async query<ToolContext extends BaseToolContext>(
-    options: SolaKitQueryOptions<ToolContext>
+    options: AIKitQueryOptions<ToolContext>
   ) {
     // Get the tools from the toolsets with context applied
     const tools = this.getTools(
@@ -85,7 +86,7 @@ export class SolaKit {
     );
     if (this.options.model === undefined) {
       throw new Error(
-        'No model has been defined. Please define a model in the constructor of SolaKit'
+        'No model has been defined. Please define a model in the constructor of AIKit'
       );
     }
     const result = generateText({
@@ -109,7 +110,7 @@ export class SolaKit {
    * @returns A ReadableStream of text chunks that can be consumed incrementally.
    */
   streamText<ToolContext extends BaseToolContext>(
-    options: SolaKitQueryOptions<ToolContext>
+    options: AIKitQueryOptions<ToolContext>
   ) {
     // Get the tools from the toolsets with context applied
     const tools = this.getTools(
@@ -119,7 +120,7 @@ export class SolaKit {
 
     if (this.options.model === undefined) {
       throw new Error(
-        'No model has been defined. Please define a model in the constructor of SolaKit'
+        'No model has been defined. Please define a model in the constructor of AIKit'
       );
     }
 
@@ -159,7 +160,7 @@ export class SolaKit {
       this.options.toolSetFactories.length === 0
     ) {
       throw new Error(
-        'There are no toolset factories defined. Define toolset factories in the constructor of SolaKit'
+        'There are no toolset factories defined. Define toolset factories in the constructor of AIKit'
       );
     }
 
@@ -205,5 +206,31 @@ export class SolaKit {
     }
 
     return tools;
+  }
+
+  /**
+   * Returns an array of all available toolset slugs.
+   * This can be useful for UI components, validation, or documentation.
+   *
+   * @returns An array of strings representing the available toolset slugs
+   */
+  getAvailableToolsetSlugs(): string[] {
+    if (
+      this.options.toolSetFactories &&
+      this.options.toolSetFactories.length > 0
+    ) {
+      // Create all toolsets with an empty context
+      const allToolSets = this.createToolSets({} as BaseToolContext);
+      return allToolSets.map(toolSet => toolSet.slug);
+    }
+
+    return getToolsetSlugs();
+  }
+
+  /**
+   * Static method that returns all available toolset slugs without requiring an instance
+   */
+  static getAvailableToolsetSlugs(): string[] {
+    return getToolsetSlugs();
   }
 }
