@@ -3,8 +3,19 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Message } from 'ai';
 import ReactMarkdown from 'react-markdown';
-import { Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { Send, ChevronDown, ChevronUp, Settings } from 'lucide-react';
 import { clsx } from 'clsx';
+
+export interface AIKitSettings {
+  appendToolSetDefinition: boolean;
+  orchestrationMode: {
+    enabled: boolean;
+    systemPrompt?: string;
+    appendToolSetDefinition?: boolean;
+  };
+  maxRecursionDepth: number;
+  showSystemPrompt: boolean;
+}
 
 interface ChatUIProps {
   messages: Message[];
@@ -17,6 +28,9 @@ interface ChatUIProps {
   walletConnected: boolean;
   walletAddress: string;
   onWalletAddressChange: (address: string) => void;
+  settings: AIKitSettings;
+  onSettingsChange: (settings: AIKitSettings) => void;
+  systemPrompt?: string;
 }
 
 export function ChatUI({
@@ -28,11 +42,15 @@ export function ChatUI({
   walletConnected,
   walletAddress,
   onWalletAddressChange,
+  settings,
+  onSettingsChange,
+  systemPrompt,
 }: ChatUIProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [expandedMessages, setExpandedMessages] = useState<
     Record<string, boolean>
   >({});
+  const [showSettings, setShowSettings] = useState(false);
 
   // Toggle tool calls visibility for a specific message
   const toggleToolCalls = (messageId: string) => {
@@ -111,12 +129,193 @@ export function ChatUI({
     );
   };
 
+  // Render settings panel
+  const renderSettingsPanel = () => {
+    return (
+      <div className="bg-card p-4 rounded-lg mb-4 border border-gray-700">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="font-medium">AIKit Settings</h3>
+          <button
+            onClick={() => setShowSettings(false)}
+            className="text-muted hover:text-white"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label htmlFor="appendToolSetDefinition" className="text-sm">
+              Append ToolSet Definition
+            </label>
+            <input
+              type="checkbox"
+              id="appendToolSetDefinition"
+              checked={settings.appendToolSetDefinition}
+              onChange={e =>
+                onSettingsChange({
+                  ...settings,
+                  appendToolSetDefinition: e.target.checked,
+                })
+              }
+              className="h-4 w-4"
+            />
+          </div>
+
+          {/* Orchestration Mode Section */}
+          <div className="border-t border-gray-700 pt-4">
+            <h4 className="font-medium text-sm mb-3">Orchestration Mode</h4>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label htmlFor="orchestrationModeEnabled" className="text-sm">
+                  Enable Orchestration
+                </label>
+                <input
+                  type="checkbox"
+                  id="orchestrationModeEnabled"
+                  checked={settings.orchestrationMode.enabled}
+                  onChange={e =>
+                    onSettingsChange({
+                      ...settings,
+                      orchestrationMode: {
+                        ...settings.orchestrationMode,
+                        enabled: e.target.checked,
+                      },
+                    })
+                  }
+                  className="h-4 w-4"
+                />
+              </div>
+
+              {settings.orchestrationMode.enabled && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="orchestrationAppendToolSetDefinition"
+                      className="text-sm"
+                    >
+                      Append ToolSet Definition in Orchestration
+                    </label>
+                    <input
+                      type="checkbox"
+                      id="orchestrationAppendToolSetDefinition"
+                      checked={
+                        settings.orchestrationMode.appendToolSetDefinition !==
+                        false
+                      }
+                      onChange={e =>
+                        onSettingsChange({
+                          ...settings,
+                          orchestrationMode: {
+                            ...settings.orchestrationMode,
+                            appendToolSetDefinition: e.target.checked,
+                          },
+                        })
+                      }
+                      className="h-4 w-4"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="orchestrationSystemPrompt"
+                      className="text-sm block mb-2"
+                    >
+                      Orchestration System Prompt
+                    </label>
+                    <textarea
+                      id="orchestrationSystemPrompt"
+                      value={settings.orchestrationMode.systemPrompt || ''}
+                      onChange={e =>
+                        onSettingsChange({
+                          ...settings,
+                          orchestrationMode: {
+                            ...settings.orchestrationMode,
+                            systemPrompt: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="Custom system prompt for orchestration"
+                      className="w-full p-2 bg-gray-900 border border-gray-700 rounded-md text-sm font-mono min-h-[80px]"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label htmlFor="maxRecursionDepth" className="text-sm">
+              Max Recursion Depth
+            </label>
+            <input
+              type="number"
+              id="maxRecursionDepth"
+              min={1}
+              max={10}
+              value={settings.maxRecursionDepth}
+              onChange={e =>
+                onSettingsChange({
+                  ...settings,
+                  maxRecursionDepth: parseInt(e.target.value) || 3,
+                })
+              }
+              className="bg-secondary p-1 w-16 rounded text-sm"
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label htmlFor="showSystemPrompt" className="text-sm">
+              Show System Prompt
+            </label>
+            <input
+              type="checkbox"
+              id="showSystemPrompt"
+              checked={settings.showSystemPrompt}
+              onChange={e =>
+                onSettingsChange({
+                  ...settings,
+                  showSystemPrompt: e.target.checked,
+                })
+              }
+              className="h-4 w-4"
+            />
+          </div>
+        </div>
+
+        {settings.showSystemPrompt && systemPrompt && (
+          <div className="mt-4">
+            <div className="text-sm font-medium mb-1">System Prompt:</div>
+            <div className="bg-gray-800 p-3 rounded-md text-xs max-h-60 overflow-y-auto">
+              <pre className="whitespace-pre-wrap font-mono">
+                {systemPrompt}
+              </pre>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-180px)]">
       {messages.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
           <div className="bg-card p-6 rounded-lg max-w-lg">
-            <h2 className="text-2xl font-bold mb-4">Welcome to SolaKit Demo</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Welcome to SolaKit Demo</h2>
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="p-2 rounded-full bg-secondary hover:bg-gray-700 transition-colors"
+                title="Settings"
+              >
+                <Settings size={16} />
+              </button>
+            </div>
+
+            {showSettings && renderSettingsPanel()}
+
             <p className="mb-4 text-muted">
               This is a simple example showcasing the SolaKit library with tool
               calling and message history capabilities.
@@ -160,50 +359,65 @@ export function ChatUI({
           </div>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
-          {messages.map(message => (
-            <div
-              key={message.id}
-              className={clsx(
-                'p-4 rounded-lg',
-                message.role === 'user'
-                  ? 'bg-secondary ml-8 mr-0'
-                  : 'bg-card mr-8 ml-0'
-              )}
+        <>
+          <div className="mb-4 flex justify-between items-center">
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="p-2 rounded-full bg-secondary hover:bg-gray-700 transition-colors flex items-center gap-1"
+              title="Settings"
             >
-              <div className="font-medium mb-2 text-sm">
-                {message.role === 'user' ? 'You' : 'Sola AI'}
-              </div>
-              <div className="markdown-content">
-                <ReactMarkdown>{message.content}</ReactMarkdown>
-              </div>
+              <Settings size={16} />
+              <span className="text-xs">Settings</span>
+            </button>
+          </div>
 
-              {message.role === 'assistant' && hasToolCalls(message) && (
-                <div className="mt-3">
-                  <button
-                    onClick={() => toggleToolCalls(message.id)}
-                    className="flex items-center text-xs text-primary hover:text-primary-hover"
-                  >
-                    {expandedMessages[message.id] ? (
-                      <>
-                        <ChevronUp size={14} className="mr-1" /> Hide tool calls
-                        ({countToolCalls(message)})
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown size={14} className="mr-1" /> View tool
-                        calls ({countToolCalls(message)})
-                      </>
-                    )}
-                  </button>
+          {showSettings && renderSettingsPanel()}
 
-                  {expandedMessages[message.id] && renderToolCalls(message)}
+          <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
+            {messages.map(message => (
+              <div
+                key={message.id}
+                className={clsx(
+                  'p-4 rounded-lg',
+                  message.role === 'user'
+                    ? 'bg-secondary ml-8 mr-0'
+                    : 'bg-card mr-8 ml-0'
+                )}
+              >
+                <div className="font-medium mb-2 text-sm">
+                  {message.role === 'user' ? 'You' : 'Sola AI'}
                 </div>
-              )}
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
+                <div className="markdown-content">
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                </div>
+
+                {message.role === 'assistant' && hasToolCalls(message) && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() => toggleToolCalls(message.id)}
+                      className="flex items-center text-xs text-primary hover:text-primary-hover"
+                    >
+                      {expandedMessages[message.id] ? (
+                        <>
+                          <ChevronUp size={14} className="mr-1" /> Hide tool
+                          calls ({countToolCalls(message)})
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown size={14} className="mr-1" /> View tool
+                          calls ({countToolCalls(message)})
+                        </>
+                      )}
+                    </button>
+
+                    {expandedMessages[message.id] && renderToolCalls(message)}
+                  </div>
+                )}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        </>
       )}
 
       <form

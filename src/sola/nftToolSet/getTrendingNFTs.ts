@@ -44,7 +44,7 @@ export const getTrendingNFTsToolFactory = createToolFactory(
         data: {
           type: 'get_trending_nfts',
           details: {
-            collections: trendingNFTs.map(nft => ({
+            collections: trendingNFTs.map((nft: TrendingNFT) => ({
               name: nft.name,
               symbol: nft.image,
               floor_price: nft.floor_price,
@@ -57,7 +57,7 @@ export const getTrendingNFTsToolFactory = createToolFactory(
         },
         error: undefined,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         error: 'Unable to retrieve trending NFT collections',

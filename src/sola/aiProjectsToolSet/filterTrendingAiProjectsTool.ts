@@ -1,7 +1,6 @@
 import { BaseToolResult } from '@/types/tools.types';
 import { z } from 'zod';
 import { createToolFactory } from '../../tools';
-import { GoatIndexTopAiProjectsApiResponse } from '@/types/goatIndex.types';
 
 // Define the parameter schema
 const trendingAiProjectsParams = z.object({
@@ -28,9 +27,8 @@ export const trendingAiProjectsToolFactory = createToolFactory(
         throw new Error('Failed to fetch AI projects');
       }
 
-      const data: GoatIndexTopAiProjectsApiResponse = await response.json();
+      const data = await response.json();
 
-      // Return based on category
       if (
         params.category === 'mindShare' &&
         data.data.topTokensOrderByMindShareIn6h
@@ -57,7 +55,6 @@ export const trendingAiProjectsToolFactory = createToolFactory(
         throw new Error('No data available for the specified category');
       }
     } catch (error) {
-      console.log(error);
       return {
         success: false,
         error:

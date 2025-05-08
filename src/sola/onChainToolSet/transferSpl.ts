@@ -8,6 +8,7 @@ const transferSplParams = z.object({
   amount: z.number().describe('Amount of the token to send.'),
   token: z.string().describe('The token that the user wants to send.'),
   address: z.string().describe('Recipient wallet address or .sol domain.'),
+  tokenTicker: z.string().describe('The ticker symbol of the token.'),
 });
 
 export const transferSplToolFactory = createToolFactory(
@@ -17,7 +18,7 @@ export const transferSplToolFactory = createToolFactory(
     parameters: transferSplParams,
   },
   async (params, context: SolaKitToolContext) => {
-    const { amount, token, address } = params;
+    const { amount, token, address, tokenTicker } = params;
 
     if (!context.authToken) {
       return {
@@ -53,7 +54,7 @@ export const transferSplToolFactory = createToolFactory(
       if (ApiClient.isApiError(prepareResponse)) {
         return {
           success: false,
-          error: 'Failed to prepare SPL transfer',
+          error: `Failed to prepare SPL transfer`,
           data: undefined,
         };
       }
@@ -76,33 +77,30 @@ export const transferSplToolFactory = createToolFactory(
         return {
           success: true,
           data: {
-            type: 'transfer_spl',
             transaction: prepareResponse.data.serializedTransaction,
             details: {
               senderAddress: context.walletPublicKey,
               recipientAddress: address,
               tokenMint: token,
               amount,
-              transaction: transaction,
+              transaction,
               params: transferParams,
+              tokenTicker: tokenTicker,
             },
-            response_id: 'temp',
-            sender: 'system',
-            timestamp: new Date().toISOString(),
           },
           error: undefined,
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           success: false,
           error: 'Error processing transaction data',
           data: undefined,
         };
       }
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
-        error: 'Unable to prepare transfer transaction',
+        error: `Unable to prepare transfer transaction: ${error instanceof Error ? error.message : 'Unknown error'}`,
         data: undefined,
       };
     }

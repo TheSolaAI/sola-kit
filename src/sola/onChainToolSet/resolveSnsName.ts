@@ -36,20 +36,14 @@ export const resolveSnsNameToolFactory = createToolFactory(
       if (!response.ok) {
         throw new Error(data.error || 'Failed to resolve domain');
       }
-
       const ownerAddress = data.address;
 
       return {
         success: true,
         data: {
-          type: 'token_address_result',
-          symbol: domain,
-          tokenAddress: ownerAddress,
+          domain,
+          walletAddress: ownerAddress,
           source: 'Solana Name Service',
-          success: true,
-          response_id: 'temp',
-          sender: 'system',
-          timestamp: new Date().toISOString(),
         },
         error: undefined,
       };

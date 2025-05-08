@@ -81,7 +81,6 @@ export const transferSolToolFactory = createToolFactory(
       return {
         success: true,
         data: {
-          type: 'transfer_sol',
           transaction: serializedTransaction,
           details: {
             senderAddress: context.walletPublicKey,
@@ -90,9 +89,6 @@ export const transferSolToolFactory = createToolFactory(
             lamports: lamports,
             transactionObject: transaction,
           },
-          response_id: 'temp',
-          sender: 'system',
-          timestamp: new Date().toISOString(),
         },
         error: undefined,
       };

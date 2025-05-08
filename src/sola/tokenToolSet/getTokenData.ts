@@ -47,8 +47,7 @@ export const getTokenDataToolFactory = createToolFactory(
       );
 
       // Check if response is valid
-      if (ApiClient.isApiResponse<TokenDataResponse>(response)) {
-        console.log('Returning token data');
+      if (ApiClient.isApiResponse(response)) {
         return {
           success: true,
           data: response.data,

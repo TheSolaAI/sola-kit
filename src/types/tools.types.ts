@@ -1,5 +1,10 @@
-import { Tool } from 'ai';
+import { Tool as AITool } from 'ai';
 
+export type Tool =
+  | AITool<any, any>
+  | {
+      mayDependOn?: string[];
+    };
 export interface BaseToolContext {
   [key: string]: any;
 }
@@ -11,7 +16,7 @@ export interface ToolSetDescription {
 }
 
 export interface ToolSet extends ToolSetDescription {
-  tools: Record<string, Tool<any, any>>;
+  tools: Record<string, Tool>;
 }
 
 export interface BaseToolResult {
