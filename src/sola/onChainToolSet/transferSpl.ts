@@ -54,7 +54,7 @@ export const transferSplToolFactory = createToolFactory(
       if (ApiClient.isApiError(prepareResponse)) {
         return {
           success: false,
-          error: `Failed to prepare SPL transfer: ${prepareResponse.status}`,
+          error: `Failed to prepare SPL transfer`,
           data: undefined,
         };
       }

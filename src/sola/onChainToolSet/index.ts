@@ -3,6 +3,7 @@ import { resolveSnsNameToolFactory } from './resolveSnsName';
 import { swapTokensToolFactory } from './swapTokens';
 import { transferSolToolFactory } from './transferSolTx';
 import { transferSplToolFactory } from './transferSpl';
+import { walletTokenBalanceToolFactory } from './walletTokenBalance';
 
 // Define the toolset using the factory pattern
 export const onChainToolSetFactory = createToolSetFactory(
@@ -17,5 +18,6 @@ export const onChainToolSetFactory = createToolSetFactory(
     transferSol: transferSolToolFactory,
     transferSpl: transferSplToolFactory,
     resolveSnsName: resolveSnsNameToolFactory,
+    walletTokenBalance: walletTokenBalanceToolFactory,
   }
 );

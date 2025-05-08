@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import { createToolFactory } from '@/tools';
 import { API_URLS, SolaKitToolContext } from '..';
-import { VersionedTransaction } from '@solana/web3.js';
 import { ApiClient } from '../apiClient';
 import { SwapParams, SwapResponse } from '@/types/jupiter.types';
 
