@@ -21,6 +21,8 @@ const swapTokensParams = z.object({
     .describe(
       'The type of swap: EXACT_IN specifies the amount of tokenA being swapped, EXACT_OUT specifies the amount of tokenB to receive, and EXACT_DOLLAR specifies the dollar amount to be swapped'
     ),
+  inputTokenTicker: z.string().describe('Token Ticker to swap from'),
+  outputTokenTicker: z.string().describe('Token Ticker to swap to'),
 });
 
 export const swapTokensToolFactory = createToolFactory(
@@ -30,7 +32,14 @@ export const swapTokensToolFactory = createToolFactory(
     parameters: swapTokensParams,
   },
   async (params, context: SolaKitToolContext) => {
-    const { inputTokenAddress, outputTokenAddress, amount, swapType } = params;
+    const {
+      inputTokenAddress,
+      outputTokenAddress,
+      amount,
+      swapType,
+      inputTokenTicker,
+      outputTokenTicker,
+    } = params as any;
 
     if (!context.authToken) {
       return {
@@ -86,36 +95,34 @@ export const swapTokensToolFactory = createToolFactory(
           response.data.transaction,
           'base64'
         );
-        const transaction = VersionedTransaction.deserialize(transactionBuffer);
-
         return {
           success: true,
           data: {
-            type: 'swap_tokens',
-            transaction: response.data.transaction,
+            transactionHash: transactionBuffer,
             details: {
               input_mint: inputTokenAddress,
               output_mint: outputTokenAddress,
               amount,
               outAmount: response.data.outAmount,
               priorityFee: response.data.priorityFee,
-              versionedTransaction: transaction,
-              params: swapParams,
+              versionedTransaction: transactionBuffer,
+              inputParams: swapParams,
+              tickers: {
+                inputTokenTicker,
+                outputTokenTicker,
+              },
             },
-            response_id: 'temp',
-            sender: 'system',
-            timestamp: new Date().toISOString(),
           },
           error: undefined,
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           success: false,
           error: 'Error processing transaction data',
           data: undefined,
         };
       }
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         error: 'Unable to prepare swap transaction',
