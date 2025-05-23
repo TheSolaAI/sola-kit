@@ -2,12 +2,13 @@ import { ApiResponse, ApiError } from '@/types/api.types';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry from 'axios-retry';
 
-type ServiceType = 'data' | 'wallet' | 'goatIndex';
+type ServiceType = 'data' | 'wallet' | 'goatIndex' | 'nextjs';
 
 interface ApiClientOptions {
   dataServiceUrl?: string;
   walletServiceUrl?: string;
   goatIndexServiceUrl?: string;
+  nextjsServiceUrl?: string;
   enableLogging?: boolean;
 }
 
@@ -15,6 +16,7 @@ export class ApiClient {
   private dataClient: AxiosInstance | null = null;
   private walletClient: AxiosInstance | null = null;
   private goatIndexClient: AxiosInstance | null = null;
+  private nextjsClient: AxiosInstance | null = null;
   private options: ApiClientOptions;
 
   constructor(options: ApiClientOptions = {}) {
@@ -39,6 +41,10 @@ export class ApiClient {
       );
     }
 
+    if (options.nextjsServiceUrl) {
+      this.nextjsClient = this.createClient(options.nextjsServiceUrl, 'nextjs');
+    }
+
     if (this.options.enableLogging) {
       console.log(`ApiClient initialized with options:`, {
         dataUrl: options.dataServiceUrl
@@ -49,6 +55,9 @@ export class ApiClient {
           : 'not set',
         goatIndexUrl: options.goatIndexServiceUrl
           ? `${options.goatIndexServiceUrl}`
+          : 'not set',
+        nextjsUrl: options.nextjsServiceUrl
+          ? `${options.nextjsServiceUrl}`
           : 'not set',
         logging: this.options.enableLogging,
       });
@@ -206,6 +215,9 @@ export class ApiClient {
         break;
       case 'goatIndex':
         client = this.goatIndexClient;
+        break;
+      case 'nextjs':
+        client = this.nextjsClient;
         break;
       default:
         throw new Error(`Unsupported service type: ${service}`);

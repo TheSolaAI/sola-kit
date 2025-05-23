@@ -62,6 +62,7 @@ export const getLuloAssetsToolFactory = createToolFactory(
           timestamp: new Date().toISOString(),
         },
         error: undefined,
+        textResponse: false,
       };
     } catch (_error) {
       return {

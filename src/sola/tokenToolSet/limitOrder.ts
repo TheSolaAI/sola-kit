@@ -91,6 +91,7 @@ export const limitOrderToolFactory = createToolFactory(
           timestamp: new Date().toISOString(),
         },
         error: undefined,
+        signAndSend: true,
       };
     } catch (error) {
       return {
