@@ -1,6 +1,6 @@
 {
   "name": "@sola-labs/ai-kit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "The Tools and workflows that power Sola AI wrapped in an easy to integrate package!",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
