@@ -5,19 +5,56 @@
  */
 
 import { aiProjectsToolSetFactory } from './aiProjectsToolSet';
-import { ApiClient } from './apiClient';
+import { ApiClient, createApiClient } from './apiClient';
 import { luloToolSetFactory } from './luloToolSet';
 import { nftToolSetFactory } from './nftToolSet';
 import { onChainToolSetFactory } from './onChainToolSet';
+import { stakingToolSetFactory } from './stakingToolSet';
 import { tokenToolSetFactory } from './tokenToolSet';
 
-// Export individual toolset factories for direct imports
+// Tool Set Exports
 export { aiProjectsToolSetFactory } from './aiProjectsToolSet';
 export { luloToolSetFactory } from './luloToolSet';
 export { nftToolSetFactory } from './nftToolSet';
 export { onChainToolSetFactory } from './onChainToolSet';
+export { stakingToolSetFactory } from './stakingToolSet';
 export { tokenToolSetFactory } from './tokenToolSet';
-export { ApiClient } from './apiClient';
+
+// API Client Exports
+export { ApiClient, createApiClient } from './apiClient';
+export type { ApiResponse, ApiError } from '@/types/api.types';
+
+// Re-export the options type for easier access
+export type ApiClientOptions = {
+  dataServiceUrl?: string;
+  walletServiceUrl?: string;
+  goatIndexServiceUrl?: string;
+  enableLogging?: boolean;
+};
+
+/**
+ * Example usage:
+ *
+ * ```typescript
+ * import { createApiClient } from '';
+ *
+ * // Initialize the API client
+ * const apiClient = createApiClient({
+ *   dataServiceUrl: 'https://api.example.com/data',
+ *   walletServiceUrl: 'https://api.example.com/wallet',
+ *   goatIndexServiceUrl: 'https://api.example.com/goat-index',
+ *   enableLogging: true
+ * });
+ *
+ * // Use in your application context
+ * const context = {
+ *   tools: {
+ *     apiClient,
+ *     // ... other tools
+ *   }
+ * };
+ * ```
+ */
 
 /**
  * Context type specifically designed for SolanaKit tools.
@@ -49,6 +86,7 @@ export const SOLA_KIT_TOOLS = [
   luloToolSetFactory,
   nftToolSetFactory,
   onChainToolSetFactory,
+  stakingToolSetFactory,
   tokenToolSetFactory,
 ];
 
@@ -75,6 +113,9 @@ export const API_URLS = {
       SHOW: 'api/wallet/jup/limit-order/show',
     },
     BLOCKHASH: 'api/wallet/blockhash',
+    RENT_EXEMPTION: 'api/wallet/rent-exemption',
+    STAKE_ACCOUNT: 'api/wallet/stake-account',
+    STAKE_ACCOUNTS: 'api/wallet/stake-accounts',
     LULO: {
       ASSETS: 'api/wallet/lulo/assets',
       DEPOSIT: 'api/wallet/lulo/deposit',

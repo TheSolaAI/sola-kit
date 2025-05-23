@@ -1,6 +1,6 @@
 {
   "name": "@sola-labs/ai-kit",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "The Tools and workflows that power Sola AI wrapped in an easy to integrate package!",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -24,11 +24,11 @@
     "ai": "^4.0.0"
   },
   "devDependencies": {
-    "ai": "^4.3.9",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
+    "ai": "^4.3.9",
     "commitlint": "^19.8.0",
     "concurrently": "^9.1.2",
     "eslint": "^9.25.1",

@@ -91,6 +91,7 @@ export const transferSolToolFactory = createToolFactory(
           },
         },
         error: undefined,
+        signAndSend: true,
       };
     } catch (error) {
       return {

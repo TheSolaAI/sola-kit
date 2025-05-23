@@ -89,6 +89,7 @@ export const transferSplToolFactory = createToolFactory(
             },
           },
           error: undefined,
+          signAndSend: true,
         };
       } catch (error) {
         return {

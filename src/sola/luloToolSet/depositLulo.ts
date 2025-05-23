@@ -104,6 +104,7 @@ export const depositLuloToolFactory = createToolFactory(
           timestamp: new Date().toISOString(),
         },
         error: undefined,
+        signAndSend: true,
       };
     } catch (_error) {
       return {
