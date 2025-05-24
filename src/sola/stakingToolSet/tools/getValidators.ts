@@ -10,13 +10,14 @@ import { validators } from '../data/validators';
 export const getValidatorsToolFactory = createToolFactory(
   {
     description:
-      'Get available validator details for a specific staking type (native or liquid)',
+      'Get available validators for a specific staking type (native or liquid)',
     parameters: stakingSchemas.getValidatorsParams,
   },
   async (
     params: GetValidatorsParams,
     context: SolaKitToolContext
   ): Promise<GetValidatorsResult> => {
+    console.log(context);
     try {
       // Filter validators based on the requested type
       const filteredValidators = validators.filter(

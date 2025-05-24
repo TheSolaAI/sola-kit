@@ -10,6 +10,8 @@ import { BaseToolContext, ToolSet } from './types/tools.types';
 import z from 'zod';
 // Re-export types
 export * from './types/tools.types';
+// Re-export sola module
+export * from './sola';
 
 export const ORCHESTRATION_DEFAULT_SYSTEM_PROMPT = `
 Based on the toolsets and their tools provided, determine the best toolset to use for the given prompt.

@@ -5,7 +5,10 @@
  */
 
 import { aiProjectsToolSetFactory } from './aiProjectsToolSet';
-import { ApiClient, createApiClient } from './apiClient';
+import {
+  ApiClient, // @ts-ignore - Used in documentation
+  createApiClient,
+} from './apiClient';
 import { luloToolSetFactory } from './luloToolSet';
 import { nftToolSetFactory } from './nftToolSet';
 import { onChainToolSetFactory } from './onChainToolSet';
