@@ -27,7 +27,7 @@ export const nativeStakeToolFactory = createToolFactory(
   },
   async (params, context: SolaKitToolContext): Promise<NativeStakingResult> => {
     if (!context.authToken) {
-      return stakingSchemas.nativeStakingResult.parse({
+      return {
         success: false,
         data: {
           transaction: '',
@@ -40,11 +40,11 @@ export const nativeStakeToolFactory = createToolFactory(
         },
         error: 'No auth token provided',
         signAndSend: false,
-      });
+      };
     }
 
     if (!context.walletPublicKey) {
-      return stakingSchemas.nativeStakingResult.parse({
+      return {
         success: false,
         data: {
           transaction: '',
@@ -57,7 +57,7 @@ export const nativeStakeToolFactory = createToolFactory(
         },
         error: 'No wallet public key provided',
         signAndSend: false,
-      });
+      };
     }
 
     try {
@@ -76,7 +76,7 @@ export const nativeStakeToolFactory = createToolFactory(
       );
 
       if (ApiClient.isApiError(rentResponse)) {
-        return stakingSchemas.nativeStakingResult.parse({
+        return {
           success: false,
           data: {
             transaction: '',
@@ -89,7 +89,7 @@ export const nativeStakeToolFactory = createToolFactory(
           },
           error: 'Failed to get rent exemption',
           signAndSend: false,
-        });
+        };
       }
 
       const rentExemption = rentResponse.data.rentExemption;
@@ -135,7 +135,7 @@ export const nativeStakeToolFactory = createToolFactory(
       );
 
       if (ApiClient.isApiError(blockhashResponse)) {
-        return stakingSchemas.nativeStakingResult.parse({
+        return {
           success: false,
           data: {
             transaction: '',
@@ -148,7 +148,7 @@ export const nativeStakeToolFactory = createToolFactory(
           },
           error: 'Failed to get recent blockhash',
           signAndSend: false,
-        });
+        };
       }
 
       transaction.recentBlockhash = blockhashResponse.data.blockhash;
@@ -157,9 +157,11 @@ export const nativeStakeToolFactory = createToolFactory(
       transaction.partialSign(stakeAccount);
 
       // Serialize the transaction
-      const serializedTransaction = transaction.serialize().toString('base64');
+      const serializedTransaction = transaction
+        .serialize({ requireAllSignatures: false })
+        .toString('base64');
 
-      return stakingSchemas.nativeStakingResult.parse({
+      return {
         success: true,
         data: {
           transaction: serializedTransaction,
@@ -172,9 +174,10 @@ export const nativeStakeToolFactory = createToolFactory(
         },
         error: undefined,
         signAndSend: true,
-      });
+      };
     } catch (error) {
-      return stakingSchemas.nativeStakingResult.parse({
+      console.error(error);
+      return {
         success: false,
         data: {
           transaction: '',
@@ -190,7 +193,7 @@ export const nativeStakeToolFactory = createToolFactory(
             ? error.message
             : 'Unknown error occurred during staking',
         signAndSend: false,
-      });
+      };
     }
   }
 );

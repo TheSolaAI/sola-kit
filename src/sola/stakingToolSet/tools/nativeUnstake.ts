@@ -2,7 +2,7 @@ import { PublicKey, StakeProgram, Transaction } from '@solana/web3.js';
 import { z } from 'zod';
 import { createToolFactory } from '@/tools';
 import { SolaKitToolContext, API_URLS } from '../../index';
-import { NativeStakingResult, stakingSchemas } from '../types';
+import { NativeUnstakingStakingResult, stakingSchemas } from '../types';
 import { ApiClient } from '../../apiClient';
 
 // Use the schema from types.ts
@@ -13,43 +13,36 @@ const nativeUnstakeParams = z.object({
 export const nativeUnstakeToolFactory = createToolFactory(
   {
     description: `Unstake native SOL from a validator. 
-        Note: It is recommended to verify or get the native stake account 
-        using the **getValidators** tool before using this tool.`,
+                  Call **nativeStakeStatus** tool before using this tool to check
+                  if the user positions can be unstaked.`,
     parameters: nativeUnstakeParams,
   },
-  async (params, context: SolaKitToolContext): Promise<NativeStakingResult> => {
+  async (
+    params,
+    context: SolaKitToolContext
+  ): Promise<NativeUnstakingStakingResult> => {
     if (!context.authToken) {
-      return stakingSchemas.nativeStakingResult.parse({
+      return {
         success: false,
         data: {
           transaction: '',
           stakeAccount: params.stakeAccount,
-          details: {
-            amount: 0, // Amount will be determined after deactivation
-            validator: '', // Will be determined from stake account
-            owner: context.walletPublicKey || '',
-          },
         },
         error: 'No auth token provided',
         signAndSend: false,
-      });
+      };
     }
 
     if (!context.walletPublicKey) {
-      return stakingSchemas.nativeStakingResult.parse({
+      return {
         success: false,
         data: {
           transaction: '',
           stakeAccount: params.stakeAccount,
-          details: {
-            amount: 0,
-            validator: '',
-            owner: '',
-          },
         },
         error: 'No wallet public key provided',
         signAndSend: false,
-      });
+      };
     }
 
     try {
@@ -75,59 +68,51 @@ export const nativeUnstakeToolFactory = createToolFactory(
       );
 
       if (ApiClient.isApiError(blockhashResponse)) {
-        return stakingSchemas.nativeStakingResult.parse({
+        return {
           success: false,
           data: {
             transaction: '',
             stakeAccount: params.stakeAccount,
-            details: {
-              amount: 0,
-              validator: '',
-              owner: context.walletPublicKey,
-            },
           },
           error: 'Failed to get recent blockhash',
           signAndSend: false,
-        });
+        };
       }
 
       transaction.recentBlockhash = blockhashResponse.data.blockhash;
 
       // Serialize the transaction
-      const serializedTransaction = transaction.serialize().toString('base64');
-
-      return stakingSchemas.nativeStakingResult.parse({
+      const serializedTransaction = transaction
+        .serialize({ requireAllSignatures: false })
+        .toString('base64');
+      console.log(
+        'Transaction instructions count:',
+        transaction.instructions.length
+      );
+      console.log('Transaction fee payer:', transaction.feePayer?.toBase58());
+      console.log('Transaction recent blockhash:', transaction.recentBlockhash);
+      return {
         success: true,
         data: {
           transaction: serializedTransaction,
           stakeAccount: params.stakeAccount,
-          details: {
-            amount: 0, // Amount will be determined after deactivation
-            validator: '', // Will be determined from stake account
-            owner: context.walletPublicKey,
-          },
         },
         error: undefined,
         signAndSend: true,
-      });
+      };
     } catch (error) {
-      return stakingSchemas.nativeStakingResult.parse({
+      return {
         success: false,
         data: {
           transaction: '',
           stakeAccount: params.stakeAccount,
-          details: {
-            amount: 0,
-            validator: '',
-            owner: context.walletPublicKey || '',
-          },
         },
         error:
           error instanceof Error
             ? error.message
             : 'Unknown error occurred during unstaking',
         signAndSend: false,
-      });
+      };
     }
   }
 );

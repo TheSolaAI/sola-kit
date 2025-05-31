@@ -23,6 +23,19 @@ export { onChainToolSetFactory } from './onChainToolSet';
 export { stakingToolSetFactory } from './stakingToolSet';
 export { tokenToolSetFactory } from './tokenToolSet';
 
+// Schema Exports for Runtime Validation
+export {
+  stakingSchemas,
+  stakingResultSchemas,
+  // Individual result schemas
+  nativeStakingResultSchema,
+  nativeUnstakingResultSchema,
+  withdrawalResultSchema,
+  withdrawableAmountResultSchema,
+  withdrawReadyResultSchema,
+  stakeStatusResultSchema,
+} from './stakingToolSet';
+
 // API Client Exports
 export { ApiClient, createApiClient } from './apiClient';
 export type { ApiResponse, ApiError } from '@/types/api.types';
@@ -117,8 +130,7 @@ export const API_URLS = {
     },
     BLOCKHASH: 'api/wallet/blockhash',
     RENT_EXEMPTION: 'api/wallet/rent-exemption',
-    STAKE_ACCOUNT: 'api/wallet/stake-account',
-    STAKE_ACCOUNTS: 'api/wallet/stake-accounts',
+    STAKE_ACCOUNT: 'api/wallet/stake-accounts',
     LULO: {
       ASSETS: 'api/wallet/lulo/assets',
       DEPOSIT: 'api/wallet/lulo/deposit',

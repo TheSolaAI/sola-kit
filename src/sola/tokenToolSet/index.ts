@@ -11,8 +11,9 @@ export const tokenToolSetFactory = createToolSetFactory(
   {
     slug: 'token',
     name: 'Crypto Tokens',
-    description:
-      'Tools for providing information on crypto tokens inside the Solana Block chain ecosystem, for placing limitOrders and getting information on placed limitOrders',
+    description: `Tools for providing information on crypto tokens inside the Solana 
+      Block chain ecosystem (realtime token data, top holders, bubblemaps), for placing limitOrders and getting information
+      on placed limitOrders`,
   },
   {
     getTokenData: getTokenDataToolFactory,

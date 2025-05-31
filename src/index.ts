@@ -13,6 +13,35 @@ export * from './types/tools.types';
 // Re-export sola module
 export * from './sola';
 
+// Re-export staking schemas for runtime validation
+export {
+  stakingSchemas,
+  stakingResultSchemas,
+  nativeStakingResultSchema,
+  nativeUnstakingResultSchema,
+  withdrawalResultSchema,
+  withdrawableAmountResultSchema,
+  withdrawReadyResultSchema,
+  stakeStatusResultSchema,
+  nativeStakingViewDataSchema,
+  nativeStakeInfoSchema,
+} from './sola/stakingToolSet';
+
+// Re-export types (type-only exports)
+export type {
+  NativeStakingViewData,
+  NativeStakeInfo,
+  NativeStakingViewResult,
+  StakeStatusData,
+  StakeStatusResult,
+  WithdrawalResult,
+  WithdrawableAmountResult,
+  WithdrawReadyResult,
+  NativeStakingResult,
+  NativeUnstakingStakingResult,
+  ValidatorListResult,
+} from './sola/stakingToolSet/types';
+
 export const ORCHESTRATION_DEFAULT_SYSTEM_PROMPT = `
 Based on the toolsets and their tools provided, determine the best toolset to use for the given prompt.
 Only determine the ToolSets based on the tools inside them. Do not determine the individual tools to use.

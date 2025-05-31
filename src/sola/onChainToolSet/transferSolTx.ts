@@ -55,7 +55,7 @@ export const transferSolToolFactory = createToolFactory(
       const blockhashResponse = await context.apiClient.get<any>(
         API_URLS.WALLET.BLOCKHASH,
         undefined,
-        'wallet',
+        'nextjs',
         context.authToken
       );
 

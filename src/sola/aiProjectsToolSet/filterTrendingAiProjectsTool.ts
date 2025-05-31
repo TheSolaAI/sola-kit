@@ -6,7 +6,6 @@ import { createToolFactory } from '../../tools';
 const trendingAiProjectsParams = z.object({
   category: z
     .enum(['mindShare', 'ranking'])
-    .default('mindShare')
     .describe('The category to fetch the AI Projects by'),
 });
 

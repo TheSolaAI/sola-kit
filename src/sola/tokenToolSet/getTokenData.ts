@@ -17,7 +17,7 @@ const getTokenDataParams = z.object({
 export const getTokenDataToolFactory = createToolFactory(
   {
     description:
-      'Get details such as the price, market cap, liquidity, price change, holders, volume of buy and sell, amount of holders, top holders and much more',
+      'Get details such as the price, market cap, liquidity, price change, volume of buy and sell',
     parameters: getTokenDataParams,
   },
   async (params, context: SolaKitToolContext) => {

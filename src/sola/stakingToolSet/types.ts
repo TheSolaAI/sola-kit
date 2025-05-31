@@ -1,4 +1,3 @@
-import { PublicKey } from '@solana/web3.js';
 import { z } from 'zod';
 
 // Base schemas for reuse
@@ -20,6 +19,11 @@ export const stakingResultDataSchema = z.object({
   details: stakingDetailsSchema,
 });
 
+export const unstakingResultDataSchema = z.object({
+  transaction: z.string().min(1),
+  stakeAccount: publicKeySchema,
+});
+
 // Native staking result schema
 export const nativeStakingResultSchema = z.object({
   success: z.boolean(),
@@ -28,22 +32,11 @@ export const nativeStakingResultSchema = z.object({
   signAndSend: z.boolean(),
 });
 
-// Validator types
-export const validatorTypeSchema = z.enum(['native', 'liquid']);
-export const validatorInfoSchema = z.object({
-  name: z.string(),
-  address: z.string(),
-  type: validatorTypeSchema,
-});
-
-export const getValidatorsParamsSchema = z.object({
-  type: validatorTypeSchema,
-});
-
-export const getValidatorsResultSchema = z.object({
+export const nativeUnstakingResultSchema = z.object({
   success: z.boolean(),
-  validators: z.array(validatorInfoSchema),
+  data: unstakingResultDataSchema,
   error: z.string().optional(),
+  signAndSend: z.boolean(),
 });
 
 // Withdrawal result schema
@@ -79,42 +72,87 @@ export const withdrawReadyResultSchema = z.object({
   error: z.string().optional(),
 });
 
+// Stake status result schema
+export const stakeStatusDataSchema = z.object({
+  stakeAccount: publicKeySchema,
+  state: z.enum(['active', 'activating', 'deactivating', 'inactive']),
+  totalAmount: amountSchema,
+  withdrawableAmount: amountSchema,
+  isReadyForWithdrawal: z.boolean(),
+  activationEpoch: z.number().nullable(),
+  deactivationEpoch: z.number().nullable(),
+  currentEpoch: z.number(),
+  epochsUntilActive: z.number().optional(),
+  epochsUntilInactive: z.number().optional(),
+  estimatedTimeUntilActive: z.number().optional(),
+  estimatedTimeUntilInactive: z.number().optional(),
+  availableActions: z.array(z.string()),
+});
+
+export const stakeStatusResultSchema = z.object({
+  success: z.boolean(),
+  data: stakeStatusDataSchema,
+  error: z.string().optional(),
+});
+
+// Native stake info schema
+export const nativeStakeInfoSchema = z.object({
+  stakeAccount: publicKeySchema,
+  amount: amountSchema,
+  validator: publicKeySchema,
+  status: z.string(),
+  epoch: z.number(),
+});
+
+// Native staking view data schema
+export const nativeStakingViewDataSchema = z.object({
+  stakes: z.array(nativeStakeInfoSchema),
+  totalStaked: amountSchema,
+});
+
+// Native staking view result schema
+export const nativeStakingViewResultSchema = z.object({
+  success: z.boolean(),
+  data: nativeStakingViewDataSchema,
+  error: z.string().optional(),
+});
+
+// Validator info schema
+export const validatorInfoSchema = z.object({
+  address: publicKeySchema,
+  name: z.string(),
+});
+
+// Validator list result schema
+export const validatorListResultSchema = z.object({
+  success: z.boolean(),
+  data: z.object({
+    validators: z.array(validatorInfoSchema),
+    totalValidators: z.number(),
+  }),
+  error: z.string().optional(),
+});
+
 // Type exports
-export type StakingDetails = z.infer<typeof stakingDetailsSchema>;
 export type StakingResultData = z.infer<typeof stakingResultDataSchema>;
 export type NativeStakingResult = z.infer<typeof nativeStakingResultSchema>;
-export type ValidatorType = z.infer<typeof validatorTypeSchema>;
-export type ValidatorInfo = z.infer<typeof validatorInfoSchema>;
-export type GetValidatorsParams = z.infer<typeof getValidatorsParamsSchema>;
-export type GetValidatorsResult = z.infer<typeof getValidatorsResultSchema>;
+export type NativeUnstakingStakingResult = z.infer<
+  typeof nativeUnstakingResultSchema
+>;
 export type WithdrawalResult = z.infer<typeof withdrawalResultSchema>;
 export type WithdrawableAmountResult = z.infer<
   typeof withdrawableAmountResultSchema
 >;
 export type WithdrawReadyResult = z.infer<typeof withdrawReadyResultSchema>;
-
-// Legacy types (keeping for backward compatibility)
-export interface NativeStakeInfo {
-  stakeAccount: PublicKey;
-  amount: number;
-  validator: PublicKey;
-  status: 'active' | 'inactive' | 'pending';
-  epoch: number;
-}
-
-export interface NativeStakingParams {
-  amount: number;
-  validatorAddress: PublicKey;
-}
-
-export interface NativeUnstakingParams {
-  stakeAccount: PublicKey;
-}
-
-export interface NativeStakingViewResult {
-  stakes: NativeStakeInfo[];
-  totalStaked: number;
-}
+export type StakeStatusData = z.infer<typeof stakeStatusDataSchema>;
+export type StakeStatusResult = z.infer<typeof stakeStatusResultSchema>;
+export type NativeStakeInfo = z.infer<typeof nativeStakeInfoSchema>;
+export type NativeStakingViewData = z.infer<typeof nativeStakingViewDataSchema>;
+export type NativeStakingViewResult = z.infer<
+  typeof nativeStakingViewResultSchema
+>;
+export type ValidatorInfo = z.infer<typeof validatorInfoSchema>;
+export type ValidatorListResult = z.infer<typeof validatorListResultSchema>;
 
 // Export all schemas
 export const stakingSchemas = {
@@ -124,11 +162,12 @@ export const stakingSchemas = {
   details: stakingDetailsSchema,
   resultData: stakingResultDataSchema,
   nativeStakingResult: nativeStakingResultSchema,
-  validatorType: validatorTypeSchema,
-  validatorInfo: validatorInfoSchema,
-  getValidatorsParams: getValidatorsParamsSchema,
-  getValidatorsResult: getValidatorsResultSchema,
   withdrawalResult: withdrawalResultSchema,
   withdrawableAmountResult: withdrawableAmountResultSchema,
   withdrawReadyResult: withdrawReadyResultSchema,
+  stakeStatusData: stakeStatusDataSchema,
+  stakeStatusResult: stakeStatusResultSchema,
+  nativeStakingView: nativeStakingViewResultSchema,
+  validatorInfo: validatorInfoSchema,
+  validatorListResult: validatorListResultSchema,
 } as const;

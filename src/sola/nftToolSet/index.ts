@@ -8,7 +8,7 @@ export const nftToolSetFactory = createToolSetFactory(
     slug: 'nftAnalyst',
     name: 'NFT Analyst',
     description:
-      'Tools for analyzing NFTs, including getting a NFTs data and the trending NFTs.',
+      'Tools for analyzing NFTs or collections, including getting a NFTs data and the trending NFTs.',
   },
   {
     getNFTPrice: getNFTPriceToolFactory,

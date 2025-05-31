@@ -15,8 +15,6 @@ const swapTokensParams = z.object({
     ),
   swapType: z
     .enum(['EXACT_IN', 'EXACT_OUT', 'EXACT_DOLLAR'])
-    .optional()
-    .default('EXACT_IN')
     .describe(
       'The type of swap: EXACT_IN specifies the amount of tokenA being swapped, EXACT_OUT specifies the amount of tokenB to receive, and EXACT_DOLLAR specifies the dollar amount to be swapped'
     ),
@@ -31,6 +29,7 @@ export const swapTokensToolFactory = createToolFactory(
     parameters: swapTokensParams,
   },
   async (params, context: SolaKitToolContext) => {
+    const parsedParams = swapTokensParams.parse(params);
     const {
       inputTokenAddress,
       outputTokenAddress,
@@ -38,7 +37,7 @@ export const swapTokensToolFactory = createToolFactory(
       swapType,
       inputTokenTicker,
       outputTokenTicker,
-    } = params as any;
+    } = parsedParams;
 
     if (!context.authToken) {
       return {
@@ -91,9 +90,9 @@ export const swapTokensToolFactory = createToolFactory(
 
       try {
         const transactionBuffer = Buffer.from(
-          response.data.transaction,
-          'base64'
-        );
+          response.data.transaction
+        ).toString('base64');
+
         return {
           success: true,
           data: {
@@ -112,6 +111,7 @@ export const swapTokensToolFactory = createToolFactory(
               },
             },
           },
+          signAndSend: true,
           error: undefined,
         };
       } catch (error) {

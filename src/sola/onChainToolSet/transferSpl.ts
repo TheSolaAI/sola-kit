@@ -45,9 +45,9 @@ export const transferSplToolFactory = createToolFactory(
 
     try {
       const prepareResponse = await context.apiClient.post<any>(
-        '/api/wallet/prepareSplTransfer',
+        'api/wallet/prepareSplTransfer',
         transferParams,
-        'wallet',
+        'nextjs',
         context.authToken
       );
 
@@ -74,16 +74,23 @@ export const transferSplToolFactory = createToolFactory(
         );
         const transaction = Transaction.from(transactionBuffer);
 
+        const serializedTransaction = Buffer.from(
+          transaction.serialize({
+            requireAllSignatures: false,
+            verifySignatures: false,
+          })
+        ).toString('base64');
+
         return {
           success: true,
           data: {
-            transaction: prepareResponse.data.serializedTransaction,
+            transaction: serializedTransaction,
             details: {
               senderAddress: context.walletPublicKey,
               recipientAddress: address,
               tokenMint: token,
               amount,
-              transaction,
+              serializedTransaction,
               params: transferParams,
               tokenTicker: tokenTicker,
             },

@@ -10,8 +10,8 @@ export const onChainToolSetFactory = createToolSetFactory(
   {
     slug: 'onChain',
     name: 'OnChain',
-    description:
-      'Tools for on-chain actions. Includes swapping tokens, transferring tokens etc.',
+    description: `Tools for on-chain actions. Includes swapping tokens, transferring tokens, 
+      resolving SNS names/domains, and checking wallet token balances.`,
   },
   {
     swapTokens: swapTokensToolFactory,

@@ -22,19 +22,14 @@ interface HeliusBalanceResponse {
 const walletTokenBalanceParams = z.object({
   walletAddress: z
     .string()
-    .optional()
     .describe(
       'Solana wallet address to check token balances for. If not provided, uses the connected wallet.'
     ),
   includeNativeBalance: z
     .boolean()
-    .optional()
-    .default(true)
     .describe('Whether to include the native SOL balance in the results'),
   minTokenAmount: z
     .number()
-    .optional()
-    .default(0)
     .describe('Minimum token amount to include in results (filters out dust)'),
 });
 
@@ -46,7 +41,9 @@ export const walletTokenBalanceToolFactory = createToolFactory(
   },
   async (params, context: SolaKitToolContext) => {
     try {
-      const walletAddress = params.walletAddress || context.walletPublicKey;
+      const parsedParams = walletTokenBalanceParams.parse(params);
+      const walletAddress =
+        parsedParams.walletAddress || context.walletPublicKey;
 
       if (!walletAddress) {
         return {
@@ -65,7 +62,7 @@ export const walletTokenBalanceToolFactory = createToolFactory(
       }
 
       const response = await context.apiClient.get<HeliusBalanceResponse>(
-        `/api/wallet/token-balances?address=${walletAddress}`,
+        `api/wallet/token-balances?address=${walletAddress}`,
         undefined,
         'wallet',
         context.authToken
@@ -81,7 +78,7 @@ export const walletTokenBalanceToolFactory = createToolFactory(
 
       // Process the tokens, filter by minimum amount if specified
       const tokens = response.data.tokens.filter(
-        token => token.uiAmount >= (params.minTokenAmount || 0)
+        token => token.uiAmount >= (parsedParams.minTokenAmount || 0)
       );
 
       const result = {
@@ -98,7 +95,7 @@ export const walletTokenBalanceToolFactory = createToolFactory(
 
       // Add native SOL balance if requested
       if (
-        params.includeNativeBalance !== false &&
+        parsedParams.includeNativeBalance !== false &&
         response.data.nativeBalance
       ) {
         result.tokens.unshift({

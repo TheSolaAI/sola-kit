@@ -1,6 +1,6 @@
 {
   "name": "@sola-labs/ai-kit",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "The Tools and workflows that power Sola AI wrapped in an easy to integrate package!",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -13,7 +13,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && tsc-alias",
     "watch": "tsc --project tsconfig.json -w",
     "prepublishOnly": "npm run build",
     "prepare": "husky",
